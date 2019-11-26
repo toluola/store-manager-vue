@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const authToken = localStorage.getItem('store_token')
+const authToken = localStorage.getItem('storeToken')
 
 const Axios = axios.create({
-  baseURL: 'https://localhost:3000',
+  baseURL: 'http://localhost:3000',
   headers: {
     'Content-Type': 'application/json'
   }

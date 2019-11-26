@@ -4,8 +4,8 @@
       <h3>Sign In</h3>
     </div>
 
-    <form @submit.prevent = 'validateForm'>
-      <div v-if = 'error.length > 0'>{{ error }}</div>
+    <form @submit.prevent = 'signinUser()'>
+      <div v-if = 'errors.length > 0'>{{ errors }}</div>
       <div>
         <label for='username' class='label'>Username</label>
         <input type='text' class='input' v-model="username" id='username' placeholder='toluola' autofocus>
@@ -19,36 +19,63 @@
   </div>
 </template>
 
-s
-
 <script>
+import { mapActions } from 'vuex'
+import JWT from 'jwt-decode'
+import Axios from '@/axios'
+
 export default {
   data () {
     return {
       username: '',
       password: '',
-      error: []
+      errors: []
     }
   },
   methods: {
     validateForm: function () {
-      this.error = []
+      this.errors = []
       if (!this.username) {
-        this.error.push('Please Enter Your Username')
+        this.errors.push('Please Enter Your Username')
       }
 
       if (this.validUsername(this.username)) {
-        this.error.push('Username should be without spaces')
+        this.errors.push('Username should be without spaces')
       }
 
       if (!this.password) {
-        this.error.push('Please Enter a password')
+        this.errors.push('Please Enter a Password')
       }
     },
     validUsername: function (username) {
       let check = /\s/
       return check.test(username)
+    },
+    ...mapActions([
+      'userSignedin',
+      'userSigninError'
+    ]),
+    signinUser: async function () {
+      try {
+        const { username, password } = this
+        await this.validateForm()
+        if (this.errors.length === 0) {
+          const axiosCall = await Axios.post('/auth/login', { username, password })
+          const decodeUser = await JWT(axiosCall.data.data.token)
+          localStorage.setItem('storeToken', axiosCall.data.data.token)
+          this.userSignedin(decodeUser)
+          this.$router.push('/dashboard')
+        }
+      } catch (error) {
+        this.userSigninError(error.response.data)
+        this.errors.push(error.response.data.message)
+        localStorage.removeItem('storeToken')
+      }
     }
   }
 }
 </script>
+
+<style scoped>
+  
+</style>
