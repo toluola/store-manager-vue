@@ -1,11 +1,10 @@
 <template>
   <div class='signin-container'>
-    <div class='signin-header'>
-        <h3>Sign In</h3>
-    </div>
     <div class="sub-signin-container">
-
-      <form @submit.prevent = 'signinUser()'>
+      <div class='signin-header'>
+        <h3>Sign In</h3>
+      </div>
+      <form @submit.prevent = 'signinUser()'  @keydown.enter="signinUser()">
         <div v-if = 'errors.length > 0'>{{ errors }}</div>
         <div>
           <label for='username' class='label'>Username</label>
@@ -81,16 +80,16 @@ export default {
 <style scoped>
   .signin-container {
     background-image: url('~@/assets/img/store.jpg');
-    height: 789px;
+    height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    background-origin: padding-box;
+    background-attachment: fixed;
+    text-align: center;
   }
 
-  .sub-signin-container {
-    margin-left: 500px;
-    width: 300px;
-    margin-top: 20px;
-    background: white;
+  form {
+    display: inline-block;
   }
 </style>
